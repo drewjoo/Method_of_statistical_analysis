@@ -1,0 +1,118 @@
+---
+title: "Hair vs. Eye"
+author: "Hyeongjin Joo"
+date: "2023-01-15"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 머리색깔과 눈색깔
+```{r}
+# 데이터 입력
+haireye<-matrix(data=c(
+	 68, 15,  5, 20,
+	119, 54, 29, 84,
+	 26, 14, 14, 17,
+	  7, 10, 16, 94
+	),
+	nrow=4,ncol=4,byrow=TRUE,
+	dimname=list(
+		c("black","brunette","red","blond"),
+		c("brown","hazel","green","blue")
+	)
+) 
+haireye
+margin.table(haireye) # 전체합
+margin.table(haireye,margin=1) # 행별 합
+margin.table(haireye,margin=2) # 열별 합
+```
+
+## 머리색깔
+```{r}
+pie(margin.table(haireye,margin=1),main = "Hair Color")
+barplot(margin.table(haireye,margin=1), main = "Hair Color")
+# 갈색(brenette)이 전체 반정도 차지하고 있고
+# 금색(blond)과 검은색(black)이 비슷한 도수를 보이며
+# 빨간색(red)가 가장 작은 빈도를 보이나,
+# 금색, 검은색, 빨간색 간의 빈도 차이가 아주
+# 커 보이지 않는다.
+```
+
+## 눈색깔
+```{r}
+pie(margin.table(haireye,margin=2), main = "Eye Color")
+barplot(margin.table(haireye,margin=2), main = "Eye Color")
+# brown과 blue가 비슷한 빈도로 많은 부분을 
+# 차지하고 있고, hazel과 green은 상대적으로
+# 적은 빈도를 차지하고 있다.
+```
+
+## 머리색깔 vs. 눈색깔
+```{r}
+# barplot
+x11()
+barplot(t(haireye), beside = T, legend=colnames(haireye),
+        args.legend = list(x="topleft"), main = "머리색깔 vs. 눈색깔")
+# mosicplot
+mosaicplot(haireye,main="머리색깔 vs. 눈색깔",
+	color=T)
+# 머리색깔이 black인 경우 눈색깔이 brown인 경우가
+# 제일 많고 blue와 hazel이 그 다음 빈도를 차지
+# 하고 있고 green이 소수인 반면,
+# blond에서는 blue가 가장 많은 빈도를 차지하고 있고
+# blue, green, hazel 순서로 빈도를 차지하고
+# 있다.
+# 각 머릿색깔에서 눈색깔이 차지하고 있는 비율이 
+# 서로 다른 경향을 보이고 있으므로 머리색깔과 
+# 눈색깔 간의 연관이 있어 보인다.
+```
+
+## 분할표 
+```{r}
+# PKG
+# install.packages("gmodels")
+library(gmodels)
+
+CrossTable(haireye)
+CrossTable(haireye,prop.t=F,prop.c=F,prop.chisq=F)
+CrossTable(haireye,prop.t=F,prop.c=F,prop.chisq=F,chisq=T)
+# 분할표에서 눈색깔에 대한 marginal 분포는 brown:hazel:green:blue=
+# 0.372:0.157:0.108:0.363이다. 반면, 각 머리색깔에서 눈색깔의 비율은 
+# marginal 분포와 다른 경향을 보이고 있다.
+# 머리색깔이 black인 경우 눈색깔이 brown인 사람의 비율이 매우 높고 
+# 눈색깔이 green이나 blue인 사람의 비율이 전체에 비하여 낮은 것을 알 수 있다.
+# 머리색깔이 brunette인 경우 눈색깔이 brown이나 hazel의 비율이 약간 높고
+# green의 비율은 비슷하며 blue이 비율이 낮다.
+# 머리색깔이 red인 경우 brown의 비율은 비슷하고 hazel의 비율은 약간 높으며
+# green의 비율은 높고 blue은 비율은 낮다.
+# 머리색깔이 blond인 경우 전체와 매우 다른 경향을 보이고 있다.
+# brown의 비율이 매우 낮으며 hazel의 비율도 낮은 반면, blue의
+# 비율이 매우 높으며 green의 비율도 높다.
+# 독립성 검정에 대한 가설검정에서 p-value가 매우 작으므로 
+# 머리색깔과 눈색깔이 독립이라고 하기 힘들다. (유의수준=0.05)
+# 전체적으로 머리색깔에 따른 눈색깔의 비율은 같다고 하기 힘들며
+# 눈색깔과 머리색깔은 서로 연관이 있는 것으로 보인다.
+```
+
+```{r}
+# brunette과 red의 독립성 확인하기기
+CrossTable(haireye[c(2,3),],prop.t=F,prop.c=F,prop.chisq=F,chisq=T)
+# 머리색깔이 brunette과 red인 경우 눈색깔이 비율이 차이가 커
+# 보이지 않고 독립성 검정에서도 p-value가 0.05보다 크므로 
+# 독립이라고 보기 힘들다. 따라서, 머리색깔이 brunette과 red인 
+# 경우에 눈색깔이 비율이 다른다고 볼 수 있는 증거가 약하다고 할 
+# 수 있다.
+```
+
+
+
+
+
+
+
+
